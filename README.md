@@ -21,8 +21,7 @@ This project implements an NFT staking contract using Solidity, allowing users t
 1. Clone the repository:
 
    ```bash
-   git clone <repository-url>
-   cd <repository-name>
+   git clone https://github.com/ajaymarkana/DZapNFTStakingContract/tree/dev
 
 npm install
 
