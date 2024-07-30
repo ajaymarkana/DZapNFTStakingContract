@@ -23,17 +23,22 @@ This project implements an NFT staking contract using Solidity, allowing users t
    ```bash
    git clone https://github.com/ajaymarkana/DZapNFTStakingContract/tree/dev
 
-2. Install NPM packages
+2. Add .env file and add below variables
+    ```bash
+    INFURA_KEY
+    ACCOUNT_PRIVATE_KEY  
+
+3. Install NPM packages
 
     ```bash
     npm install
 
-3. Compile smart contract
+4. Compile smart contract
 
     ```bash
     npx hardhat compile
 
-4. Deploy smart contract
+5. Deploy smart contract
 
     ```bash
     npx hardhat run scripts/deploy.js --network sepolia
