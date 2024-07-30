@@ -52,7 +52,6 @@ To run the tests, execute:
 npx hardhat test
 
 
-
 ### 5. **Usage**
 
 ```markdown
@@ -66,22 +65,6 @@ To interact with the deployed contract, you can use Hardhat tasks or a frontend 
 const staking = await ethers.getContractAt("Staking", <staking_contract_address>);
 await nft.approve(staking.address, tokenId);
 await staking.stakeNFT(tokenId);
-
-
-### 5. **Usage**
-
-```markdown
-## Usage
-
-To interact with the deployed contract, you can use Hardhat tasks or a frontend interface that connects to the contract. Below are examples of common interactions:
-
-### Staking an NFT
-
-```javascript
-const staking = await ethers.getContractAt("Staking", <staking_contract_address>);
-await nft.approve(staking.address, tokenId);
-await staking.stakeNFT(tokenId);
-
 
 ### 6. **Contract Upgrades**
 
