@@ -85,22 +85,6 @@ The project uses OpenZeppelin's UUPS (Universal Upgradeable Proxy Standard) patt
 const newImplementation = await ethers.getContractFactory("NewStakingImplementation");
 await upgrades.upgradeProxy(proxyAddress, newImplementation);
 
-
-### 7. **Contributing**
-
-```markdown
-## Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository.
-2. Create a new branch for your feature or bugfix.
-3. Make your changes and commit them with a descriptive message.
-4. Push your changes to your forked repository.
-5. Submit a pull request.
-
-Please ensure your code follows the project's coding standards and includes relevant tests.
-
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
