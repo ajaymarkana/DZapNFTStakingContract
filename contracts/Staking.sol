@@ -14,7 +14,10 @@ contract Staking is Initializable, OwnableUpgradeable, UUPSUpgradeable, Pausable
     IERC20 public rewardTokens;
     IERC721 public stakingNFT;
 
+    // Unbonding Period after which user can withdraw nft
     uint256 public unbondingPeriod;
+
+    // reward delay after which user can claim reward
     uint256 public rewardDelay;
 
     // Structure for storing rewards
@@ -35,10 +38,13 @@ contract Staking is Initializable, OwnableUpgradeable, UUPSUpgradeable, Pausable
         uint256 unstakedAtBlockNumber;
     }
 
+    // Array which stores rewards per block
     RewardPerBlock[] public rewardPerBlock;
 
+    // staker: staker address => nftId => stakerData
     mapping(address => mapping (uint256  => StakerData)) public stake;
 
+    // users staked nft: stakerAddress => array of nftIds
     mapping (address => uint256[]) public userStakedNFTs;
 
     event stakedNFT(address indexed NFTStaker,uint256 StakedNFT);
@@ -46,7 +52,19 @@ contract Staking is Initializable, OwnableUpgradeable, UUPSUpgradeable, Pausable
     event claimedRewards(address indexed claimer,uint256 amount);
     event NFTWithdraw(address indexed withdrawer,uint256 nftId);
 
+    // this function is used as constructor for this contract
+
+    // Requirements
+
+    // - this function can only be called once.
     function initialize(address _stakingNFT,address _rewardToken,uint256 _rewardPerBlock,uint256 _unbondingPeriod,uint256 _rewardDelay) initializer public {
+        
+        require(_stakingNFT != address(0),"NFT address cannot be zero");
+        require(_rewardToken != address(0),"Reward token address cannnot be zero");
+        require(_rewardPerBlock > 0,"Rewards must be more than zero");
+        require(_unbondingPeriod > 0,"Unbonding period must be more than zero");
+        require(_rewardDelay > 0,"Reward delay must me more than zero");
+
         __Ownable_init(msg.sender);
         __UUPSUpgradeable_init();
 
@@ -63,6 +81,10 @@ contract Staking is Initializable, OwnableUpgradeable, UUPSUpgradeable, Pausable
     }
 
     // Function to stake NFT 
+
+    // Requirements
+
+    // - staker must have to set approval of nft to staking contract
     function stakeNFT(uint256 nftId) external whenNotPaused {
         StakerData storage stakeData = stake[msg.sender][nftId];
 
@@ -96,6 +118,10 @@ contract Staking is Initializable, OwnableUpgradeable, UUPSUpgradeable, Pausable
     }
 
     // Function to withdraw NFT after user stake NFT
+
+    //Requirement
+
+    // - only after unbonding period user can withdraw nft
     function withdrawNFT(uint256 nftId) external {
         StakerData storage stakeData = stake[msg.sender][nftId];
 
@@ -142,6 +168,8 @@ contract Staking is Initializable, OwnableUpgradeable, UUPSUpgradeable, Pausable
 
     // Function to calculate rewards of perticular user
     function _calculateReward(address _staker,uint256 nftId) internal view returns(uint256){
+
+        require(_staker != address(0),"Staker address must not be zero.");
         StakerData storage stakeData = stake[_staker][nftId];
 
         uint256 fromBlock = stakeData.lastClaimedBlockNumber;
@@ -152,6 +180,8 @@ contract Staking is Initializable, OwnableUpgradeable, UUPSUpgradeable, Pausable
 
     // Function to calculate rewards between blocks
      function calculateRewardBetweenBlocks(uint256 _from, uint256 _to) internal view returns (uint256) {
+        require(_from > 0,"From block number must not be zero.");
+        require(_to > 0,"To block number must not be zero.");
         uint256 reward = 0;
         uint256 length = rewardPerBlock.length;
 
@@ -172,6 +202,7 @@ contract Staking is Initializable, OwnableUpgradeable, UUPSUpgradeable, Pausable
 
     // Internal function which removes nftId from user staked NFT array
     function _removeNFTFromStakedArray(address staker, uint256 nftId) internal {
+        require(staker != address (0),"Staker address must not be zero");
         uint256[] storage stakedNFTs = userStakedNFTs[staker];
         uint256 length = stakedNFTs.length;
         bool found = false;
@@ -194,6 +225,7 @@ contract Staking is Initializable, OwnableUpgradeable, UUPSUpgradeable, Pausable
     // Function to update reward per block
     // only called by contract admin
     function updateRewardPerBlock(uint256 _newRewardPerBlock) external onlyOwner {
+        require(_newRewardPerBlock > 0,"Reward must be more than zero");
         rewardPerBlock.push(RewardPerBlock({
             rewardAmount: _newRewardPerBlock,
             updatedAt: block.number
@@ -203,12 +235,15 @@ contract Staking is Initializable, OwnableUpgradeable, UUPSUpgradeable, Pausable
     // Function to update unbonding period
     // only called by contract admin
     function updateUnbondingPeriod(uint256 _unbondingPeriod) external onlyOwner{
+        require(_unbondingPeriod > 0,"Unbonding period must be more than zero");
+
         unbondingPeriod = _unbondingPeriod;
     }
 
     // Function to update reward delay
     // only called by contract admin
     function updateRewardDelay(uint256 _rewardDelay) external onlyOwner{
+        require(_rewardDelay > 0,"Reward delay must be more than zero");
         rewardDelay = _rewardDelay;
     }
 
