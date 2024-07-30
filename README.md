@@ -36,7 +36,7 @@ This project implements an NFT staking contract using Solidity, allowing users t
 4. Deploy smart contract
 
     ```bash
-    npx hardhat run scripts/deploy.js --network <network-name>
+    npx hardhat run scripts/deploy.js --network sepolia
 
 
 ### 4. **Testing**
